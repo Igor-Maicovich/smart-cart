@@ -37,10 +37,11 @@ func main() {
 		port = "8080"
 	}
 
-	if _, err := strconv.Atoi(port); err != nil {
+	portNum, err := strconv.Atoi(port)
+	if err != nil {
 		log.Fatal("Invalid port:", port)
 	}
-	log.Printf("Starting server on port %d...", port)
+	log.Printf("Starting server on port %d...", portNum)
 
 	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("failed to run server: %v", err)
