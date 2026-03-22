@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"smart-cart/internal/cart"
 	"smart-cart/internal/db"
@@ -36,7 +37,11 @@ func main() {
 		port = "8080"
 	}
 
-	log.Printf("Starting server on port %s...", port)
+	if _, err := strconv.Atoi(port); err != nil {
+		log.Fatal("Invalid port:", port)
+	}
+	log.Printf("Starting server on port %d...", port)
+
 	if err := r.Run(":" + port); err != nil {
 		log.Fatalf("failed to run server: %v", err)
 	}
