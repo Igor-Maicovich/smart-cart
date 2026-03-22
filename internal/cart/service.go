@@ -2,6 +2,13 @@ package cart
 
 import "context"
 
+type ServiceInterface interface {
+	AddItem(ctx context.Context, item Item) error
+	GetAll() ([]Item, error)
+	Update(id int, input Item) (Item, error)
+	Delete(id int) error
+}
+
 type Service struct {
 	repo *Repository
 }
@@ -9,7 +16,6 @@ type Service struct {
 func NewService(repo *Repository) *Service {
 	return &Service{repo: repo}
 }
-
 func (s *Service) AddItem(ctx context.Context, item Item) error {
 	return s.repo.AddItem(ctx, item)
 }
