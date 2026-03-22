@@ -39,7 +39,7 @@ func main() {
 
 	portNum, err := strconv.Atoi(port)
 	if err != nil {
-		log.Fatal("Invalid port:", port)
+		log.Fatal("Invalid port")
 	}
 	log.Printf("Starting server on port %d...", portNum)
 
