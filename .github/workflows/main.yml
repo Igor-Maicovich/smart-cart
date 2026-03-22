@@ -35,7 +35,7 @@ jobs:
         run: go mod tidy
 
       - name: Run pre-commit hooks
-        uses: pre-commit/action@v4
+        uses: pre-commit/action@v3
         with:
           extra_args: run --all-files
 
