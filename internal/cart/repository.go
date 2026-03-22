@@ -3,6 +3,7 @@ package cart
 import (
 	"context"
 	"database/sql"
+	"log"
 )
 
 type Repository struct {
@@ -38,6 +39,7 @@ func (r *Repository) GetAll() ([]Item, error) {
 	}
 	defer func() {
 		if err := rows.Close(); err != nil {
+			log.Println("warning: failed to close rows:", err)
 		}
 	}()
 
