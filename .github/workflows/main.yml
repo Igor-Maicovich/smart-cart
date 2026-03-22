@@ -34,10 +34,11 @@ jobs:
       - name: Install dependencies
         run: go mod tidy
 
+      - name: Install pre-commit
+        run: python3 -m pip install --upgrade pip pre-commit
+
       - name: Run pre-commit hooks
-        uses: pre-commit/action@v3
-        with:
-          extra_args: run --all-files
+        run: pre-commit run --all-files
 
       - name: Run golangci-lint
         run: |
