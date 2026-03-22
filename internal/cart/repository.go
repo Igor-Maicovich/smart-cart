@@ -36,7 +36,10 @@ func (r *Repository) GetAll() ([]Item, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+		}
+	}()
 
 	var items []Item
 	for rows.Next() {
