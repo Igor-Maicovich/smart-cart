@@ -66,18 +66,15 @@ jobs:
           curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
             -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
             -d text="CI Pipeline for PR #${{ github.event.pull_request.number }}: ${STATUS} - ${{ github.event.pull_request.html_url }}"
-      - name: Login to GitHub Container Registry
+
+      - name: Login to GHCR
         if: github.event_name == 'push'
-        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u igor-maicovich --password-stdin
 
       - name: Build Docker image
         if: github.event_name == 'push'
-        run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/smart-cart:latest
-          docker build -t $IMAGE_NAME .
+        run: docker build -t ghcr.io/igor-maicovich/smart-cart:latest .
 
       - name: Push Docker image to GHCR
         if: github.event_name == 'push'
-        run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/smart-cart:latest
-          docker push $IMAGE_NAME
+        run: docker push ghcr.io/igor-maicovich/smart-cart:latest
