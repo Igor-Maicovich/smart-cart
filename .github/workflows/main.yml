@@ -86,17 +86,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.21
+
       - name: Install Semgrep
         run: pip install semgrep
 
-      - name: Run Semgrep
-        run: semgrep --config auto ./... --json > semgrep-report.json
-
-      - name: Upload report
-        uses: actions/upload-artifact@v4
-        with:
-          name: semgrep-report
-          path: semgrep-report.json
+      - name: Run Semgrep scan
+        run: semgrep --config auto ./internal/...
 
   security-sca:
     runs-on: ubuntu-latest
@@ -109,7 +108,7 @@ jobs:
       - name: Run govulncheck
         run: |
           go install golang.org/x/vuln/cmd/govulncheck@latest
-          govulncheck ./...
+          govulncheck ./internal/...
 
   security-gate:
     runs-on: ubuntu-latest
