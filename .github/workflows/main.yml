@@ -69,13 +69,15 @@ jobs:
         run: go test ./... -v
 
   security:
+    name: Security Checks
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        tool: [gosec, semgrep, govulncheck]
+        tool: [gosec, govulncheck, semgrep]
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up environment
         run: |
@@ -88,7 +90,8 @@ jobs:
           # Python для semgrep
           if [[ "${{ matrix.tool }}" == "semgrep" ]]; then
             echo "Setting up Python 3.11"
-            python3 --version || sudo apt-get install -y python3 python3-pip
+            sudo apt-get update
+            sudo apt-get install -y python3 python3-pip
           fi
 
       - name: Run ${{ matrix.tool }}
@@ -96,11 +99,11 @@ jobs:
         run: |
           if [[ "${{ matrix.tool }}" == "gosec" ]]; then
             go install github.com/securego/gosec/v2/cmd/gosec@latest
-            echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+            export PATH="$(go env GOPATH)/bin:$PATH"
             gosec ./...
           elif [[ "${{ matrix.tool }}" == "govulncheck" ]]; then
             go install golang.org/x/vuln/cmd/govulncheck@latest
-            echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+            export PATH="$(go env GOPATH)/bin:$PATH"
             go clean -modcache
             go mod tidy
             govulncheck ./internal/...
