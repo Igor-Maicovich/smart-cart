@@ -9,3 +9,4 @@ repos:
     rev: v1.54.2
     hooks:
       - id: golangci-lint
+        additional_dependencies: ["github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.2"]
