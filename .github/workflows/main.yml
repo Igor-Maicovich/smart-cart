@@ -51,6 +51,9 @@ jobs:
         run: |
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s latest
           ./bin/golangci-lint run ./...
+      - name: Show pre-commit log
+        if: failure()
+        run: cat /home/runner/.cache/pre-commit/pre-commit.log || echo "Log not found"
 
   test:
     runs-on: ubuntu-latest
