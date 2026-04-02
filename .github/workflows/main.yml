@@ -71,7 +71,7 @@ jobs:
 
   security-semgrep:
     runs-on: ubuntu-latest
-    needs: test
+    needs: [lint, test]
     steps:
       - uses: actions/checkout@v4
 

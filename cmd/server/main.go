@@ -57,7 +57,7 @@ func main() {
 		TLSConfig: tlsConfig,
 	}
 
-	if err := server.ListenAndServeTLS("server.crt", "server.key"); err != nil {
+	if err := server.ListenAndServeTLS("certs/server-dev.crt", "certs/server-dev.key"); err != nil {
 		log.Fatalf("failed to run server: %v", err)
 	}
 }

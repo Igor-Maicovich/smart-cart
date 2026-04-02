@@ -49,3 +49,5 @@ config.local.json
 terraform.tfstate
 terraform.tfstate.backup
 .terraform/
+
+certs/server-dev.*
