@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"smart-cart/internal/cart"
 	"smart-cart/internal/db"
@@ -52,9 +53,10 @@ func main() {
 	}
 
 	server := &http.Server{
-		Addr:      ":" + port,
-		Handler:   r,
-		TLSConfig: tlsConfig,
+		Addr:              ":" + port,
+		Handler:           r,
+		TLSConfig:         tlsConfig,
+		ReadHeaderTimeout: 10 * time.Second,
 	}
 
 	if err := server.ListenAndServeTLS("certs/server-dev.crt", "certs/server-dev.key"); err != nil {
