@@ -40,17 +40,21 @@ jobs:
     needs: setup
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-go@v5
         with:
           go-version: '1.22'
+
+      - name: Install goimports
+        run: |
+          go install golang.org/x/tools/cmd/goimports@latest
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+
       - name: Install pre-commit
         run: python3 -m pip install --upgrade pip pre-commit
+
       - name: Run pre-commit hooks
         run: pre-commit run --all-files
-      - name: Run golangci-lint
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s latest
-          ./bin/golangci-lint run ./...
 
   test:
     runs-on: ubuntu-latest
