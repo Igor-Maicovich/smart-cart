@@ -45,3 +45,7 @@ docker-compose.override.yml
 
 config.local.yaml
 config.local.json
+
+terraform.tfstate
+terraform.tfstate.backup
+.terraform/
