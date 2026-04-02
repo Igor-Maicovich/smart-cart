@@ -1,14 +1,23 @@
 repos:
-  - repo: https://github.com/golangci/golangci-lint
-    rev: v1.57.2
+  - repo: local
     hooks:
-      - id: golangci-lint
-        args:
-          - --timeout=5m
-          - --fast
-          - --enable=gofmt
-          - --enable=goimports
+      - id: go-fmt
+        name: go fmt
+        entry: go fmt ./...
+        language: system
+        types: [go]
 
+      - id: go-imports
+        name: goimports
+        entry: goimports -w .
+        language: system
+        types: [go]
+
+      - id: go-mod-tidy
+        name: go mod tidy
+        entry: go mod tidy
+        language: system
+        types: [go]
 
   - repo: https://github.com/golangci/golangci-lint
     rev: v1.57.2
