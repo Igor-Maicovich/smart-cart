@@ -7,37 +7,9 @@ on:
     branches: [main]
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-
-      - name: Clear Go build cache
-        run: rm -rf ~/.cache/go-build
-
-      - name: Cache Go build
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/go-build
-          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-build-
-
-      - name: Install Go dependencies
-        run: go mod tidy
-
-      - name: Install goimports (system)
-        run: go install golang.org/x/tools/cmd/goimports@latest
 
   lint:
     runs-on: ubuntu-latest
-    needs: setup
     steps:
       - uses: actions/checkout@v4
 
@@ -58,7 +30,6 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    needs: setup
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -74,7 +45,6 @@ jobs:
 
   security-gosec:
     runs-on: ubuntu-latest
-    needs: [lint, test]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -101,7 +71,6 @@ jobs:
 
   security-sca:
     runs-on: ubuntu-latest
-    needs: [lint, test]
     steps:
       - uses: actions/checkout@v4
 
@@ -123,7 +92,7 @@ jobs:
 
   security-gate:
     runs-on: ubuntu-latest
-    needs: [security-gosec, security-semgrep, security-sca]
+    needs: [security-gosec, security-semgrep, security-sca, lint, test]
     steps:
       - name: Check security status
         run: |
