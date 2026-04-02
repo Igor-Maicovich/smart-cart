@@ -28,29 +28,6 @@ jobs:
       - name: Run pre-commit hooks
         run: pre-commit run --all-files
 
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [1.23, 1.24, 1.25]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ matrix.go-version }}
-
-      - name: Generate dev TLS certs
-        run: |
-          mkdir -p certs
-          rm -f certs/server-dev.crt certs/server-dev.key
-          openssl req -x509 -newkey rsa:4096 -keyout certs/server-dev.key -out certs/server-dev.crt -days 1 -nodes -subj "/CN=localhost"
-
-      - name: Run unit tests
-        run: go test ./... -v
-
   security-gosec:
     runs-on: ubuntu-latest
     steps:
@@ -110,6 +87,29 @@ jobs:
             exit 1
           fi
           echo "✅ Security checks passed!"
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.23, 1.24, 1.25]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Generate dev TLS certs
+        run: |
+          mkdir -p certs
+          rm -f certs/server-dev.crt certs/server-dev.key
+          openssl req -x509 -newkey rsa:4096 -keyout certs/server-dev.key -out certs/server-dev.crt -days 1 -nodes -subj "/CN=localhost"
+
+      - name: Run unit tests
+        run: go test ./... -v
 
   docker:
     runs-on: ubuntu-latest
