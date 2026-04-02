@@ -1,7 +1,9 @@
 package main
 
 import (
+	"crypto/tls"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 
@@ -27,6 +29,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
+
 	repo := cart.NewRepository(database)
 	service := cart.NewService(repo)
 	handler := cart.NewHandler(service)
@@ -41,9 +44,20 @@ func main() {
 	if err != nil {
 		log.Fatal("Invalid port")
 	}
+
 	log.Printf("Starting server on port %d...", portNum)
 
-	if err := r.Run(":" + port); err != nil {
+	tlsConfig := &tls.Config{
+		MinVersion: tls.VersionTLS13, // Используем TLS 1.3
+	}
+
+	server := &http.Server{
+		Addr:      ":" + port,
+		Handler:   r,
+		TLSConfig: tlsConfig,
+	}
+
+	if err := server.ListenAndServeTLS("server.crt", "server.key"); err != nil {
 		log.Fatalf("failed to run server: %v", err)
 	}
 }
