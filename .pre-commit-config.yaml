@@ -4,10 +4,11 @@ repos:
     hooks:
       - id: golangci-lint
         args:
-          - --timeout=10m
+          - --timeout=5m
           - --fast
           - --enable=gofmt
           - --enable=goimports
+
 
   - repo: https://github.com/golangci/golangci-lint
     rev: v1.57.2
