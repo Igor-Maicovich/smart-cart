@@ -76,10 +76,9 @@ jobs:
         tool: [gosec, govulncheck, semgrep]
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up environment
+      - name: Set up Go / Python
         run: |
           if [[ "${{ matrix.tool }}" == "gosec" || "${{ matrix.tool }}" == "govulncheck" ]]; then
             echo "Setting up Go 1.25"
@@ -92,32 +91,25 @@ jobs:
             sudo apt-get install -y python3 python3-pip
           fi
 
-      - name: Prepare modules and install tools
+      - name: Install and run ${{ matrix.tool }}
         run: |
           if [[ "${{ matrix.tool }}" == "gosec" ]]; then
             go install github.com/securego/gosec/v2/cmd/gosec@latest
             export PATH="$(go env GOPATH)/bin:$PATH"
+            gosec ./...
           elif [[ "${{ matrix.tool }}" == "govulncheck" ]]; then
             export GO111MODULE=on
             go mod tidy
             go mod download
             go install golang.org/x/vuln/cmd/govulncheck@latest
             export PATH="$(go env GOPATH)/bin:$PATH"
+            govulncheck ./internal/...
           elif [[ "${{ matrix.tool }}" == "semgrep" ]]; then
             python3 -m pip install --upgrade pip
             pip install semgrep
-          fi
-
-      - name: Run ${{ matrix.tool }}
-        shell: bash
-        run: |
-          if [[ "${{ matrix.tool }}" == "gosec" ]]; then
-            gosec ./...
-          elif [[ "${{ matrix.tool }}" == "govulncheck" ]]; then
-            govulncheck ./internal/...
-          elif [[ "${{ matrix.tool }}" == "semgrep" ]]; then
             semgrep --config auto ./internal
           fi
+        shell: bash
 
   security-gate:
     runs-on: ubuntu-latest
