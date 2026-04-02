@@ -11,4 +11,3 @@ repos:
       - id: golangci-lint
         args:
           - --timeout=5m
-          - --fast
