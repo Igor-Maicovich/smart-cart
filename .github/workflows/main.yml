@@ -117,7 +117,7 @@ jobs:
       - name: Check security status
         run: |
           if [ "${{ needs.security-gosec.result }}" = "failure" ] || \
-             [ "${{ needs.security-codeql.result }}" = "failure" ] || \
+             [ "${{ needs.security-semgrep.result }}" = "failure" ] || \
              [ "${{ needs.security-sca.result }}" = "failure" ]; then
             echo "❌ Critical vulnerabilities found!"
             exit 1
