@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"log"
+	"smart-cart/internal/metrics"
 )
 
 type Repository struct {
@@ -28,7 +29,8 @@ func (r *Repository) AddItem(ctx context.Context, item Item) error {
 		item.Price,
 		item.Quantity,
 	)
-
+	count, _ := r.GetAll()
+	metrics.CartItemsCurrent.Set(float64(len(count)))
 	return err
 }
 
@@ -61,6 +63,8 @@ func (r *Repository) Update(id int, input Item) (Item, error) {
 		return Item{}, err
 	}
 	input.ID = id
+	count, _ := r.GetAll()
+	metrics.CartItemsCurrent.Set(float64(len(count)))
 	return input, nil
 }
 

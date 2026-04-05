@@ -1,0 +1,57 @@
+{
+  "dashboard": {
+    "title": "Infrastructure Metrics",
+    "tags": ["infrastructure", "production"],
+    "refresh": "30s",
+    "panels": [
+      {
+        "id": 1,
+        "title": "CPU Usage (%)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "100 - (avg by(instance)(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+            "legendFormat": "CPU %"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Memory Usage (%)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "100 * (1 - ((node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes))",
+            "legendFormat": "Memory %"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Disk Usage (%)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "100 * (node_filesystem_size_bytes{mountpoint=\"/\"} - node_filesystem_free_bytes{mountpoint=\"/\"}) / node_filesystem_size_bytes{mountpoint=\"/\"}",
+            "legendFormat": "Disk %"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Network I/O (Bytes/sec)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(node_network_receive_bytes_total[5m])",
+            "legendFormat": "RX"
+          },
+          {
+            "expr": "rate(node_network_transmit_bytes_total[5m])",
+            "legendFormat": "TX"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+groups:
+- name: smart-cart-alerts
+  rules:
+  - alert: HighErrorRate
+    expr: sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) > 0.001
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Высокий уровень ошибок API"
+      description: "Ошибка >0.1% за последние 5 минут"
+
+  - alert: HighLatency
+    expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) > 0.3
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Высокая задержка API"
+      description: "99-й перцентиль запросов > 300ms"
+
+  - alert: CartItemsOutOfRange
+    expr: cart_items_current < 0 or cart_items_current > 50
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Количество товаров в корзине вне допустимого диапазона"
+      description: "Текущее количество товаров: {{ $value }}"

@@ -1,0 +1,51 @@
+global:
+  resolve_timeout: 5m
+  smtp_smarthost: 'smtp.mail.ru:587'
+  smtp_from: 'alertmanagersmartcart@smartcart.ru'
+  smtp_auth_username: 'smartcart@mail.ru'
+  smtp_auth_password: 'smartcartpassword'
+  smtp_require_tls: true
+
+route:
+  receiver: 'email-warning'          
+  group_by: ['alertname', 'severity']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+
+  routes:
+    - match:
+        severity: critical
+      receiver: 'email-critical'
+      continue: true
+    - match:
+        severity: warning
+      receiver: 'email-warning'
+
+receivers:
+  - name: 'email-critical'
+    email_configs:
+      - to: 'guthelm@bk.ru'
+        send_resolved: true
+        html: |
+          <h2>🚨 CRITICAL: {{ .CommonLabels.alertname }}</h2>
+          <p><strong>Status:</strong> {{ .Status }}</p>
+          <p><strong>Severity:</strong> {{ .CommonLabels.severity }}</p>
+          <p><strong>Value / Description:</strong> {{ .CommonAnnotations.description }}</p>
+          <p><strong>StartsAt:</strong> {{ .StartsAt }}</p>
+
+  - name: 'email-warning'
+    email_configs:
+      - to: 'guthelm@bk.ru'
+        send_resolved: true
+        html: |
+          <h2>⚠️ WARNING: {{ .CommonLabels.alertname }}</h2>
+          <p><strong>Value / Description:</strong> {{ .CommonAnnotations.description }}</p>
+          <p><strong>StartsAt:</strong> {{ .StartsAt }}</p>
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'instance']
