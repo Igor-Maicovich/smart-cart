@@ -57,6 +57,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Create artifacts directory
+        run: mkdir -p artifacts
+
       - name: Run Trivy filesystem scan (table)
         uses: aquasecurity/trivy-action@master
         with:
